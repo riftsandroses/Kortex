@@ -1,0 +1,100 @@
+# Ignore OS-specific files
+.DS_Store
+
+# Ignore all .env files
+**/.env
+**/.env.*
+
+# Allow env example files
+!.env.example
+!Django-backend/.env.example
+
+# Project folders
+Kortex/
+artifacts/
+encryption_keys/
+yaml/
+/media/csv/**
+
+# Python/Django
+__pycache__/
+*.py[cod]
+*.pyc
+*.log
+*.pot
+*.mo
+*.so
+db.sqlite3
+scanner_logs.log
+
+# Virtual environments
+venv/
+env/
+
+# Django migrations (ignore all but keep __init__.py)
+**/migrations/
+!**/migrations/__init__.py
+
+# Celery files
+*.bak
+*.dat
+*.dir
+/Django-backend/celerybeat-schedule
+
+# Sphinx
+docs/_build/
+
+# C extensions
+*.so
+
+# Distribution/packaging
+bin/
+build/
+develop-eggs/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Node.js
+node_modules/
+.pnp/
+.pnp.js
+
+# Test and coverage
+coverage/
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+
+# Build output
+build/
+dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE/editor config files
+.project
+.pydevproject
+.ropeproject
+.mr.developer.cfg
+
+# Ignore all .log files inside Django-backend/logs/
+Django-backend/logs/*.log
+
+# But keep the folder itself
+!Django-backend/logs/.gitkeep
