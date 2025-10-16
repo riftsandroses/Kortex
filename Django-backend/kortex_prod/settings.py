@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
     'django_extensions',
+    'django_celery_results',
 
     # Project apps
     'guardrails.apps.GuardrailsConfig',
@@ -283,11 +284,9 @@ sentry_sdk.init(
 # LOGGING
 # -------------------------------------------------------------------
 
-GUARDRAILS_MODEL_ROOT = os.getenv('GUARDRAILS_MODEL_ROOT', '/var/lib/kortex/guardrails_models')
+KATANA_MODEL_ROOT = os.getenv('KATANA_MODEL_ROOT', '/var/lib/kortex/katana_models')
 
-# -------------------------------------------------------------------
-# LOGGING
-# -------------------------------------------------------------------
+GUARDRAILS_MODEL_ROOT = os.getenv('GUARDRAILS_MODEL_ROOT', '/var/lib/kortex/kamui_models')
 
 LOGGING = {
     "version": 1,
@@ -309,17 +308,83 @@ LOGGING = {
         "sentry": {
             "class": "sentry_sdk.integrations.logging.EventHandler",
             "level": "ERROR"
-        }
+        },
+        # App-specific file handlers
+        "katana_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(BASE_DIR, "logs", "katana.log"),
+            "formatter": "verbose",
+            "maxBytes": 1024 * 1024 * 2048,  # 2 GB
+            "backupCount": 5,
+        },
+        "guardrails_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(BASE_DIR, "logs", "guardrails.log"),
+            "formatter": "verbose",
+            "maxBytes": 1024 * 1024 * 2048,  # 2 GB
+            "backupCount": 5,
+        },
+        "login_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(BASE_DIR, "logs", "login.log"),
+            "formatter": "verbose",
+            "maxBytes": 1024 * 1024 * 2048,  # 2 GB
+            "backupCount": 5,
+        },
+        "model_orch_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(BASE_DIR, "logs", "model_orch.log"),
+            "formatter": "verbose",
+            "maxBytes": 1024 * 1024 * 2048,  # 2 GB
+            "backupCount": 5,
+        },
+        # General application log file
+        "file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(BASE_DIR, "logs", "django.log"),
+            "formatter": "verbose",
+            "maxBytes": 1024 * 1024 * 2048,  # 2 GB
+            "backupCount": 5,
+        },
     },
     "loggers": {
+        # Root logger
         "": {
-            "handlers": ["console", "sentry"],
+            "handlers": ["console", "file"],
             "level": "INFO",
         },
+        # Django request logger
         "django.request": {
-            "handlers": ["console", "sentry"],
+            "handlers": ["console", "file", "sentry"],
             "level": "ERROR",
             "propagate": False,
-        }
+        },
+        # App-specific loggers with detailed logging
+        "katana": {
+            "handlers": ["console", "katana_file"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+        "guardrails": {
+            "handlers": ["console", "guardrails_file"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+        "login": {
+            "handlers": ["console", "login_file"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+        "model_orch": {
+            "handlers": ["console", "model_orch_file"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+        # Django database queries (optional - can be verbose)
+        "django.db.backends": {
+            "handlers": ["console", "file"],
+            "level": "DEBUG",  # Set to DEBUG to see all SQL queries
+            "propagate": False,
+        },
     }
 }

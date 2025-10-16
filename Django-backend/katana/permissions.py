@@ -24,7 +24,7 @@ class HasValidAPIKey(permissions.BasePermission):
     """
     
     def has_permission(self, request, view):
-        api_key = request.headers.get('X-API-Key')
+        api_key = request.headers.get('X-Katana-API-Key')
         
         if not api_key:
             return False

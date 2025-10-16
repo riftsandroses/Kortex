@@ -14,7 +14,13 @@ class CapturedResponseAdmin(admin.ModelAdmin):
 
 @admin.register(ModelVersion)
 class ModelVersionAdmin(admin.ModelAdmin):
-    list_display = ('app', 'version', 'created_at')
+    list_display = ['version', 'app', 'categories_preview', 'created_at']
+    list_filter = ['app', 'created_at']
+    search_fields = ['version', 'app__name']
+    
+    def categories_preview(self, obj):
+        return ", ".join(obj.categories[:3]) + ("..." if len(obj.categories) > 3 else "")
+    categories_preview.short_description = 'Categories'
 
 @admin.register(TrainingJob)
 class TrainingJobAdmin(admin.ModelAdmin):

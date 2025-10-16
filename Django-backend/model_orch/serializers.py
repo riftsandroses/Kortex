@@ -8,7 +8,7 @@ class ModelVersionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ModelVersion
-        fields = ['id', 'version', 'app_name', 'app_slug', 'metrics', 'model_files', 'created_at']
+        fields = ['id', 'version', 'app_name', 'app_slug', 'categories', 'metrics', 'model_files', 'created_at']
 
 class AssignModelSerializer(serializers.Serializer):
     target_app_slug = serializers.SlugField()

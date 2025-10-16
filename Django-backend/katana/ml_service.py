@@ -17,32 +17,33 @@ class GuardrailsMLService:
     """Service for ML model training and inference"""
 
     def __init__(self):
-        self.models_dir = os.path.join(settings.MEDIA_ROOT, 'guardrails_models')
+        self.models_dir = os.path.join(settings.KATANA_MODEL_ROOT, 'katana_models')
         os.makedirs(self.models_dir, exist_ok=True)
 
     def get_base_model(self) -> Tuple[MLPClassifier, TfidfVectorizer]:
         """Initialize base neural network model"""
         vectorizer = TfidfVectorizer(
-            max_features=5000,
-            ngram_range=(1, 3),
-            min_df=2,
-            max_df=0.95,
+            max_features=1000,
+            ngram_range=(1, 2),
+            min_df=1,
+            max_df=1.0,
             strip_accents='unicode',
-            lowercase=True
+            lowercase=True,
+            stop_words=None
         )
 
         classifier = MLPClassifier(
-            hidden_layer_sizes=(256, 128, 64),
+            hidden_layer_sizes=(64, 32),
             activation='relu',
             solver='adam',
-            alpha=0.0001,
-            batch_size=32,
+            alpha=0.001,
+            batch_size=16,
             learning_rate='adaptive',
             learning_rate_init=0.001,
-            max_iter=200,
+            max_iter=100,
             early_stopping=True,
-            validation_fraction=0.1,
-            n_iter_no_change=10,
+            validation_fraction=0.2,
+            n_iter_no_change=5,
             random_state=42,
             verbose=False
         )

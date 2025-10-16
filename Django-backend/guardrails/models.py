@@ -42,6 +42,7 @@ class ModelVersion(models.Model):
     model_files = models.JSONField(default=list, blank=True)  # stores paths/URIs
     trained_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     notes = models.TextField(blank=True)
+    categories = models.JSONField(default=list, blank=True, help_text="List of categories/labels that this model can classify")
 
     class Meta:
         unique_together = ('app', 'version')

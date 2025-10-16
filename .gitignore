@@ -98,3 +98,7 @@ Django-backend/logs/*.log
 
 # But keep the folder itself
 !Django-backend/logs/.gitkeep
+
+# Ignore all trained ML Models
+Django-backend/guardrails_models/**
+Django-backend/models/**

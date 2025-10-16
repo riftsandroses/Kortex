@@ -71,9 +71,21 @@ class CaptureResponseAPIView(APIView):
         captured = serializer.save()
         # Kick off async evaluation (attempt low-latency inference)
         try:
-            async_evaluate_and_store.delay(str(captured.id))
+            from .ml.inference import evaluate_text_with_model
+            label, score, action = evaluate_text_with_model(captured.app.slug, captured.response_text)
+            captured.predicted_label = label
+            captured.predicted_score = score
+            captured.action = action
+            captured.evaluated = True
+            captured.save()
         except Exception as e:
-            logger.exception("Failed to queue eval task")
+            logger.warning(f"Synchronous evaluation failed: {e}")
+            # Still queue async task as fallback
+            async_evaluate_and_store.delay(str(captured.id))
+        else:
+            # If sync evaluation worked, still queue async for any post-processing
+            async_evaluate_and_store.delay(str(captured.id))
+        
         return Response(CapturedResponseSerializer(captured).data, status=status.HTTP_201_CREATED)
 
 # --- Retrieve responses + labeling ---
@@ -90,7 +102,10 @@ class CapturedResponseListAPIView(APIView):
             qs = qs.filter(app__slug=app_slug)
         if labeled in ('true', 'false'):
             qs = qs.filter(labeled=(labeled == 'true'))
-        return qs
+
+        serializer = self.serializer_class(qs, many=True)
+        return Response(serializer.data)
+
 
 class CapturedResponseDetailAPIView(APIView):
     permission_classes = [IsAuthenticated]

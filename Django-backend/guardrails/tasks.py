@@ -55,14 +55,17 @@ def launch_training_job(self, training_job_id):
         version = result['version']
         metrics = result.get('metrics', {})
         model_files = result.get('model_files', [])
+        categories = result.get('labels', [])  # ← Get categories from training result
 
         mv, _ = ModelVersion.objects.get_or_create(app=app, version=version, defaults={
             'metrics': metrics,
             'model_files': model_files,
+            'categories': categories,
             'trained_by': tj.initiated_by,
         })
         mv.metrics = metrics
         mv.model_files = model_files
+        mv.categories = categories
         mv.save()
 
         app.current_model_version = mv.version
