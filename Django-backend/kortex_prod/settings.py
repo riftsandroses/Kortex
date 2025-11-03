@@ -120,10 +120,10 @@ DATABASES = {
 # CORS CONFIGURATIONS
 # -------------------------------------------------------------------
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:3001"    # React frontend
+    "http://localhost:5173"    # Svelte frontend
 ]
 
+CORS_ALLOW_CREDENTIALS = True
 
 # -------------------------------------------------------------------
 # AUTHENTICATION
